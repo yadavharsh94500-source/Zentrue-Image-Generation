@@ -49,11 +49,7 @@
 
 
 
-
-
-
-
-
+// ─── Provider Loader ──────────────────────────────────────────
 const getProvider = () => {
   const providerName = (process.env.AI_PROVIDER || "openai").toLowerCase();
 
@@ -65,14 +61,28 @@ const getProvider = () => {
 
   const provider = providers[providerName];
   if (!provider) {
-    throw new Error(`Unknown AI_PROVIDER: "${providerName}". Choose from: openai, replicate, fashn`);
+    // CHANGED: httpStatus set karo taki route.js sahi status de sake
+    const err = new Error(
+      `AI service is not configured correctly. Please contact support.`
+    );
+    err.httpStatus = 500;
+    throw err;
   }
 
   console.log(`[aiService] Using provider: ${providerName}`);
   return provider;
 };
 
-const generateModels = async ({ files, ageGroup, gender, backgroundColor, modelStyle, pose, generations }) => {
+// ─── Main Generate Function ───────────────────────────────────
+const generateModels = async ({
+  files,
+  ageGroup,
+  gender,
+  backgroundColor,
+  modelStyle,
+  pose,
+  generations,
+}) => {
   const provider = getProvider();
 
   const imageBuffers = files.map((f) => f.buffer);
@@ -80,6 +90,9 @@ const generateModels = async ({ files, ageGroup, gender, backgroundColor, modelS
 
   console.log("[aiService] Sending to provider with options...");
 
+  // CHANGED: try-catch hata diya — error ko as-is throw karne do
+  // Provider (openai.js) ne already httpStatus set kar diya hai
+  // Agar hum yahan catch karke re-throw karte hain toh httpStatus lost ho sakta tha
   const images = await provider.generate(null, imageBuffers, count, {
     ageGroup,
     gender,
@@ -89,7 +102,9 @@ const generateModels = async ({ files, ageGroup, gender, backgroundColor, modelS
   });
 
   if (!images || images.length === 0) {
-    throw new Error("AI returned no images. Please try again.");
+    const err = new Error("AI returned no images. Please try again.");
+    err.httpStatus = 500;
+    throw err;
   }
 
   return images;

@@ -13,19 +13,61 @@ const apiClient = axios.create({
   timeout: 120000,
 });
 
+// ─── Response Interceptor ─────────────────────────────────────
 apiClient.interceptors.response.use(
   (res) => res,
   (err) => {
+    // Dev logs (server mein dikhega, user ko nahi)
     console.log("[API] Error status:", err.response?.status);
     console.log("[API] Error data:", JSON.stringify(err.response?.data));
-    const msg =
-      err.response?.data?.message ||
-      err.message ||
-      "Something went wrong. Please try again.";
+    console.log("[API] Error code:", err.code);
+    console.log("[API] Error message:", err.message);
+
+    let msg;
+
+    if (err.response) {
+      // ── Server ne response diya (4xx / 5xx) ────────────────
+      // Backend ne message set kiya hai — wahi use karo
+      // (validate.js, upload.js, openai.js sab ne already
+      //  user-friendly message set kar diya hai)
+      const serverMessage = err.response.data?.message;
+      const status = err.response.status;
+
+      if (serverMessage) {
+        // Backend ka message sabse reliable hai — directly use karo
+        msg = serverMessage;
+      } else if (status === 429) {
+        msg = "You are generating too fast. Please wait 1 minute and try again.";
+      } else if (status === 503) {
+        msg = "Image generation is temporarily unavailable. Please try again later.";
+      } else if (status === 502) {
+        msg = "AI service is temporarily down. Please try again in a few minutes.";
+      } else if (status >= 500) {
+        msg = "Something went wrong on our end. Please try again.";
+      } else {
+        msg = `Server error (${status}). Please try again.`;
+      }
+
+    } else if (err.code === "ECONNABORTED") {
+      // ── Axios timeout (120 seconds) ─────────────────────────
+      // CHANGED: helpful message — Render cold start mention
+      msg =
+        "Generation is taking too long. If this is your first request, the server may be starting up. Please wait 30 seconds and try again.";
+
+    } else if (err.message === "Network Error") {
+      // ── Server tak pahuncha hi nahi ─────────────────────────
+      // CHANGED: show actual URL so dev can debug
+      msg = `Cannot reach the server. Make sure the backend is running and check your EXPO_PUBLIC_API_URL in .env (currently: ${BASE_URL}).`;
+
+    } else {
+      msg = err.message || "Something went wrong. Please try again.";
+    }
+
     throw new Error(msg);
   }
 );
 
+// ─── Generate Models ──────────────────────────────────────────
 export const generateModels = async ({
   images,
   ageGroup,
@@ -35,24 +77,25 @@ export const generateModels = async ({
   pose,
   generations,
 }) => {
+  // Client-side guard — catch karo API call se pehle
   if (!images || images.length === 0) {
-    throw new Error("At least one clothing image is required.");
+    throw new Error("Please add at least 1 clothing photo to continue.");
   }
   if (images.length > 4) {
-    throw new Error("Maximum 4 images allowed.");
+    throw new Error("You can only upload up to 4 photos at once.");
   }
 
   const formData = new FormData();
 
-  // ─── Append images ─────────────────────────────────────────
+  // ─── Images append karo ────────────────────────────────────
   for (let index = 0; index < images.length; index++) {
     const image = images[index];
 
     if (image._webFile) {
-      // Web: append actual File object — blob URI kaam nahi karta
+      // Web: actual File object — blob URI kaam nahi karta
       formData.append("images", image._webFile, image.fileName);
     } else {
-      // Native (Android/iOS)
+      // Native (Android / iOS)
       const { uri, fileName, type } = image;
       const resolvedName = fileName || `image_${index}.jpg`;
       let resolvedMime = type;
@@ -67,7 +110,7 @@ export const generateModels = async ({
     }
   }
 
-  // ─── Append fields ─────────────────────────────────────────
+  // ─── Fields append karo ────────────────────────────────────
   formData.append("ageGroup", ageGroup);
   formData.append("gender", gender);
   formData.append("backgroundColor", backgroundColor || "#FFFFFF");
@@ -80,12 +123,13 @@ export const generateModels = async ({
   });
 
   if (!response.data.success) {
-    throw new Error(response.data.message || "Generation failed.");
+    throw new Error(response.data.message || "Generation failed. Please try again.");
   }
 
   return response.data.images;
 };
 
+// ─── Health Check ─────────────────────────────────────────────
 export const checkHealth = async () => {
   const response = await apiClient.get("/health");
   return response.data;

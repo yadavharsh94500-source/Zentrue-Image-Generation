@@ -12,56 +12,71 @@ const validate = (req, res, next) => {
   if (!files || files.length === 0) {
     return res.status(400).json({
       success: false,
-      message: "At least one clothing image is required.",
+      // CHANGED: "At least one clothing image is required" → more human
+      message: "Please add at least 1 clothing photo to continue.",
     });
   }
 
   // ─── Required: Age Group ────────────────────────────────────
-  if (!ageGroup || !VALID_AGE_GROUPS.includes(ageGroup.toLowerCase())) {
+  if (!ageGroup) {
     return res.status(400).json({
       success: false,
-      message: `Invalid age group. Choose from: ${VALID_AGE_GROUPS.join(", ")}`,
+      message: "Please select an age group to continue.",
+    });
+  }
+  if (!VALID_AGE_GROUPS.includes(ageGroup.toLowerCase())) {
+    return res.status(400).json({
+      success: false,
+      // CHANGED: technical list → plain sentence
+      message: "Invalid age group. Please choose Kid, Adult, or Senior.",
     });
   }
 
   // ─── Required: Gender ───────────────────────────────────────
-  if (!gender || !VALID_GENDERS.includes(gender.toLowerCase())) {
+  if (!gender) {
     return res.status(400).json({
       success: false,
-      message: `Invalid gender. Choose from: ${VALID_GENDERS.join(", ")}`,
+      message: "Please select a gender to continue.",
+    });
+  }
+  if (!VALID_GENDERS.includes(gender.toLowerCase())) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid gender. Please choose Male or Female.",
     });
   }
 
-  // ─── Optional: Model Style (default: ecommerce) ─────────────
+  // ─── Optional: Model Style ──────────────────────────────────
   if (modelStyle && !VALID_MODEL_STYLES.includes(modelStyle.toLowerCase())) {
     return res.status(400).json({
       success: false,
-      message: `Invalid model style. Choose from: ${VALID_MODEL_STYLES.join(", ")}`,
+      message: `Invalid model style. Choose from: ${VALID_MODEL_STYLES.join(", ")}.`,
     });
   }
 
-  // ─── Optional: Pose (default: standing_front) ───────────────
+  // ─── Optional: Pose ─────────────────────────────────────────
   if (pose && !VALID_POSES.includes(pose.toLowerCase())) {
     return res.status(400).json({
       success: false,
-      message: `Invalid pose. Choose from: ${VALID_POSES.join(", ")}`,
+      message: `Invalid pose. Choose from: ${VALID_POSES.join(", ")}.`,
     });
   }
 
-  // ─── Optional: Generations (default: 1) ─────────────────────
+  // ─── Optional: Generations ──────────────────────────────────
   const genCount = parseInt(generations);
   if (generations && !VALID_GENERATIONS.includes(genCount)) {
     return res.status(400).json({
       success: false,
-      message: `Invalid generation count. Choose from: ${VALID_GENERATIONS.join(", ")}`,
+      message: `Invalid number of images. Choose 1, 2, 4, or 8.`,
     });
   }
 
-  // ─── Optional: Background Color — basic hex validation ──────
+  // ─── Optional: Background Color ─────────────────────────────
   if (backgroundColor && !/^#([0-9A-Fa-f]{6})$/.test(backgroundColor)) {
     return res.status(400).json({
       success: false,
-      message: "Invalid background color. Use hex format like #FFFFFF",
+      // CHANGED: added example in message
+      message: "Invalid background color. Please use a hex code like #FFFFFF or #000000.",
     });
   }
 

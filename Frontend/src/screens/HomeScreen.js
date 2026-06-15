@@ -70,13 +70,23 @@ export default function HomeScreen() {
         },
       });
     } catch (error) {
-      console.error("[HomeScreen] Generation error:", error.message);
+      console.log("[HomeScreen] Generation error:", error.message);
       router.back();
-      Alert.alert(
-        "Generation Failed",
-        error.message || "Something went wrong. Please try again.",
-        [{ text: "OK" }],
-      );
+
+      // Alert.alert web pe kaam nahi karta
+      // Platform check lagao
+      if (Platform.OS === "web") {
+        window.alert(
+          "Generation Failed\n\n" +
+            (error.message || "Something went wrong. Please try again."),
+        );
+      } else {
+        Alert.alert(
+          "Generation Failed",
+          error.message || "Something went wrong. Please try again.",
+          [{ text: "OK" }],
+        );
+      }
     } finally {
       setLoading(false);
     }

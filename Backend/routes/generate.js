@@ -13,30 +13,33 @@ router.post(
   "/generate-models",
   limiter,
   (req, res, next) => {
-    // Multer error handling wrapper
     upload.array("images", 4)(req, res, (err) => {
       if (!err) return next();
 
       if (err.code === "LIMIT_FILE_SIZE") {
         return res.status(400).json({
           success: false,
-          message: `File size must be under ${process.env.MAX_FILE_SIZE_MB || 10}MB`,
+          message: `One of your photos is too large. Please use images under ${process.env.MAX_FILE_SIZE_MB || 10}MB.`,
         });
       }
       if (err.code === "LIMIT_FILE_COUNT") {
         return res.status(400).json({
           success: false,
-          message: "Maximum 4 images allowed.",
+          message: "You can only upload up to 4 photos at once.",
         });
       }
       if (err.message === "INVALID_FORMAT") {
         return res.status(400).json({
           success: false,
-          message: "Please upload JPG, PNG or WEBP only.",
+          message: "This file type is not supported. Please upload a JPG, PNG, or WEBP photo.",
         });
       }
 
-      next(err);
+      // Unknown multer error
+      return res.status(400).json({
+        success: false,
+        message: "Could not read the uploaded file. Please try a different image.",
+      });
     });
   },
   validate,
@@ -56,15 +59,19 @@ router.post(
         generations: parseInt(generations) || 1,
       });
 
-      return res.json({
-        success: true,
-        images,
-      });
+      return res.json({ success: true, images });
+
     } catch (error) {
       console.error("[generate] Error:", error.message);
-      return res.status(500).json({
+
+      // CHANGED: pehle message string match karta tha — bahut fragile tha
+      // Ab directly error.httpStatus use karo jo openai.js ne set kiya hai
+      // Agar httpStatus nahi hai toh 500 default
+      const statusCode = error.httpStatus || 500;
+
+      return res.status(statusCode).json({
         success: false,
-        message: "Something went wrong. Please try again.",
+        message: error.message || "Something went wrong. Please try again.",
       });
     }
   }

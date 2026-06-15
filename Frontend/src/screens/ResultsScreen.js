@@ -5,24 +5,30 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   ScrollView,
   SafeAreaView,
   Alert,
   Dimensions,
   ActivityIndicator,
+  Platform,
+  Modal,        // ← ADDED
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { saveImageToGallery } from "../utils/imageHelper";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const GRID_PADDING = 16;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const GRID_PADDING = 20;
 const GRID_GAP = 10;
-const SINGLE_IMAGE_W = SCREEN_WIDTH - GRID_PADDING * 2;
-const DOUBLE_IMAGE_W = (SCREEN_WIDTH - GRID_PADDING * 2 - GRID_GAP) / 2;
 
-// Aspect ratio 3:4 — height is always proportional, no overflow
+const MAX_CONTENT_WIDTH = 480;
+const EFFECTIVE_WIDTH = Math.min(SCREEN_WIDTH, MAX_CONTENT_WIDTH);
+
+const SINGLE_IMAGE_W = EFFECTIVE_WIDTH - GRID_PADDING * 2;
+const DOUBLE_IMAGE_W = (EFFECTIVE_WIDTH - GRID_PADDING * 2 - GRID_GAP) / 2;
+
 const getImageHeight = (width) => width * (4 / 3);
 
 export default function ResultsScreen() {
@@ -30,6 +36,9 @@ export default function ResultsScreen() {
   const params = useLocalSearchParams();
   const [savingIndex, setSavingIndex] = useState(null);
   const [savedIndices, setSavedIndices] = useState([]);
+
+  // ── ADDED: fullscreen modal state ──
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   let images = [];
   try {
@@ -43,33 +52,48 @@ export default function ResultsScreen() {
   const tileWidth = isSingle ? SINGLE_IMAGE_W : DOUBLE_IMAGE_W;
   const tileHeight = getImageHeight(tileWidth);
 
+  // CHANGED: pehle window.open karta tha — ab modal open karta hai
+  const handleOpenImage = (url) => {
+    setPreviewUrl(url);
+  };
+
   const handleDownload = async (url, index) => {
     setSavingIndex(index);
     try {
       await saveImageToGallery(url);
       setSavedIndices((prev) => [...prev, index]);
-      Alert.alert("Saved!", "Image saved to your gallery.");
+      if (Platform.OS === "web") {
+        window.alert("Image saved to your gallery.");
+      } else {
+        Alert.alert("Saved!", "Image saved to your gallery.");
+      }
     } catch (error) {
-      Alert.alert("Save failed", error.message || "Could not save image.");
+      if (Platform.OS === "web") {
+        window.alert("Save failed: " + (error.message || "Could not save image."));
+      } else {
+        Alert.alert("Save failed", error.message || "Could not save image.");
+      }
     } finally {
       setSavingIndex(null);
     }
   };
 
   const handleRegenerate = (url, index) => {
-    Alert.alert(
-      "Regenerate similar",
-      "This will create a new variation with the same outfit, style and pose direction.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Regenerate",
-          onPress: () => {
-            Alert.alert("Coming soon", "Regeneration will be available soon.");
+    if (Platform.OS === "web") {
+      window.alert("Coming soon: Regeneration will be available soon.");
+    } else {
+      Alert.alert(
+        "Regenerate similar",
+        "This will create a new variation with the same outfit, style and pose direction.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Regenerate",
+            onPress: () => Alert.alert("Coming soon", "Regeneration will be available soon."),
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const handleDownloadAll = async () => {
@@ -78,7 +102,7 @@ export default function ResultsScreen() {
     }
   };
 
-  // ─── Empty State ─────────────────────────────────────────────────────────────
+  // ─── Empty State ──────────────────────────────────────────────
   if (images.length === 0) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -102,9 +126,49 @@ export default function ResultsScreen() {
     );
   }
 
-  // ─── Main Screen ─────────────────────────────────────────────────────────────
+  // ─── Main Screen ──────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.safe}>
+
+      {/* ── ADDED: Fullscreen Image Modal ── */}
+      <Modal
+        visible={!!previewUrl}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPreviewUrl(null)}
+      >
+        <View style={styles.modalBackdrop}>
+          {/* Close button */}
+          <TouchableOpacity
+            style={styles.modalClose}
+            onPress={() => setPreviewUrl(null)}
+          >
+            <Feather name="x" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          {/* Full image */}
+          {previewUrl && (
+            <Image
+              source={{ uri: previewUrl }}
+              style={styles.modalImage}
+              resizeMode="contain"
+            />
+          )}
+
+          {/* Download from modal */}
+          <TouchableOpacity
+            style={styles.modalDownloadBtn}
+            onPress={() => {
+              const idx = images.findIndex((img) => img.url === previewUrl);
+              handleDownload(previewUrl, idx);
+            }}
+          >
+            <Feather name="download" size={16} color="#fff" />
+            <Text style={styles.modalDownloadText}>Download</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
@@ -132,13 +196,13 @@ export default function ResultsScreen() {
           {images.map((img, index) => (
             <View
               key={index}
-              style={[
-                styles.tile,
-                { width: tileWidth },
-              ]}
+              style={[styles.tile, { width: tileWidth }]}
             >
-              {/* Image */}
-              <View style={{ width: tileWidth, height: tileHeight }}>
+              {/* Image — tap to open fullscreen modal */}
+              <Pressable
+                onPress={() => handleOpenImage(img.url)}
+                style={{ width: tileWidth, height: tileHeight }}
+              >
                 <Image
                   source={{ uri: img.url }}
                   style={styles.image}
@@ -150,6 +214,11 @@ export default function ResultsScreen() {
                   <Text style={styles.badgeText}>{index + 1}</Text>
                 </View>
 
+                {/* Tap to expand hint */}
+                <View style={styles.expandHint}>
+                  <Feather name="maximize-2" size={11} color="#fff" />
+                </View>
+
                 {/* Saved checkmark overlay */}
                 {savedIndices.includes(index) && (
                   <View style={styles.savedOverlay}>
@@ -159,7 +228,7 @@ export default function ResultsScreen() {
                     </View>
                   </View>
                 )}
-              </View>
+              </Pressable>
 
               {/* Action Bar below image */}
               <View style={styles.tileActions}>
@@ -219,24 +288,61 @@ export default function ResultsScreen() {
   );
 }
 
-// ─── Styles ─────────────────────────────────────────────────────────────────────
+// ─── Styles ──────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: "#F5F4F8",
+    paddingHorizontal: Platform.OS === "web" ? 0 : 12,
   },
-  scroll: {
-    flex: 1,
-  },
+  scroll: { flex: 1 },
   content: {
     paddingHorizontal: GRID_PADDING,
     paddingTop: 20,
+    maxWidth: MAX_CONTENT_WIDTH,
+    width: "100%",
+    alignSelf: "center",
+  },
+
+  // ── ADDED: Modal styles ──
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.92)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalClose: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    zIndex: 10,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 20,
+    padding: 8,
+  },
+  modalImage: {
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.78,
+  },
+  modalDownloadBtn: {
+    position: "absolute",
+    bottom: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#7C3AED",
+    paddingHorizontal: 24,
+    paddingVertical: 13,
+    borderRadius: 14,
+  },
+  modalDownloadText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "600",
   },
 
   // ── Header ──
-  header: {
-    marginBottom: 20,
-  },
+  header: { marginBottom: 20 },
   backLink: {
     flexDirection: "row",
     alignItems: "center",
@@ -268,9 +374,7 @@ const styles = StyleSheet.create({
     gap: GRID_GAP,
     marginBottom: 16,
   },
-  gridSingle: {
-    justifyContent: "center",
-  },
+  gridSingle: { justifyContent: "center" },
 
   // ── Tile ──
   tile: {
@@ -279,7 +383,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderWidth: 0.5,
     borderColor: "rgba(0,0,0,0.08)",
-    // subtle shadow
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -306,6 +409,16 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 11,
     fontWeight: "600",
+  },
+
+  // ── ADDED: Expand hint icon ──
+  expandHint: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "rgba(0,0,0,0.30)",
+    borderRadius: 6,
+    padding: 5,
   },
 
   // ── Saved overlay ──

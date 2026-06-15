@@ -1,60 +1,10 @@
-// const OpenAI = require("openai");
-
-// const client = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// const generate = async (prompt, imageBuffers, count) => {
-//   const results = [];
-
-//   const primaryImageBuffer = imageBuffers[0];
-
-//   const imageFile = await OpenAI.toFile(primaryImageBuffer, "clothing.png", {
-//     type: "image/png",
-//   });
-
-//   const response = await client.images.edit({  // ✅ generate → edit
-//     model: "gpt-image-1",
-//     image: imageFile,                          // ✅ image pass ho rahi hai
-//     prompt: prompt,
-//     n: count,
-//     size: "1024x1024",
-//     quality: "low",                            // ✅ credits bachenge
-//   });
-
-//   for (const img of response.data) {
-//     if (img.url) {
-//       results.push({ url: img.url });
-//     } else if (img.b64_json) {
-//       results.push({ url: `data:image/png;base64,${img.b64_json}` });
-//     }
-//   }
-
-//   return results;
-// };
-
-// module.exports = { generate };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const OpenAI = require("openai");
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Step 1: Clothing analyse karo
+// ─── Step 1: Clothing analyse karo ────────────────────────────
 const analyzeClothing = async (imageBuffer) => {
   const base64Image = imageBuffer.toString("base64");
 
@@ -111,7 +61,7 @@ const analyzeClothing = async (imageBuffer) => {
   }
 };
 
-// Step 2: Best prompt banao
+// ─── Step 2: Smart prompt banao ───────────────────────────────
 const buildSmartPrompt = (info, { ageGroup, gender, modelStyle, pose, backgroundColor }) => {
   const style = modelStyle || "ecommerce";
   const bg = backgroundColor || "#FFFFFF";
@@ -153,41 +103,105 @@ PHOTO SPECIFICATIONS:
 OUTPUT STYLE: Premium ${style} catalogue photography, similar to top fashion ecommerce brands.`;
 };
 
+// ─── Error Mapper ─────────────────────────────────────────────
+// CHANGED: ab httpStatus bhi set hota hai error pe
+// Taki route.js string match nahi kare — direct status code use kare
+const mapOpenAIError = (error) => {
+  console.error("[openai] Raw error:", error?.status, error?.code, error?.message);
+
+  const status = error?.status;
+  const code = error?.code || error?.error?.code;
+
+  let userMessage;
+  let httpStatus;
+
+  if (status === 429 && code === "insufficient_quota") {
+    // Credits khatam
+    userMessage = "AI generation credits are exhausted. Please try again later or contact support.";
+    httpStatus = 503;
+  } else if (status === 429) {
+    // Too many requests
+    userMessage = "Our AI is busy right now. Please wait 30 seconds and try again.";
+    httpStatus = 429;
+  } else if (status === 401 || code === "invalid_api_key") {
+    // Wrong/expired key
+    userMessage = "AI service authentication failed. Please contact support.";
+    httpStatus = 503;
+  } else if (status === 400 && code === "model_not_found") {
+    // Model config issue
+    userMessage = "AI model configuration error. Please contact support.";
+    httpStatus = 503;
+  } else if (status === 400) {
+    // OpenAI rejected the image/request (content policy etc.)
+    userMessage =
+      error?.error?.message ||
+      "This image could not be processed. Please try a different photo.";
+    httpStatus = 400;
+  } else if (status === 503 || status === 502) {
+    // OpenAI server down
+    userMessage = "AI service is temporarily unavailable. Please try again in a moment.";
+    httpStatus = 502;
+  } else {
+    userMessage = "AI generation failed. Please try again.";
+    httpStatus = 500;
+  }
+
+  const err = new Error(userMessage);
+  err.httpStatus = httpStatus; // ← route.js yahi use karega
+  return err;
+};
+
+// ─── Main Generate Function ───────────────────────────────────
 const generate = async (prompt, imageBuffers, count, options = {}) => {
   const results = [];
   const primaryImageBuffer = imageBuffers[0];
 
-  // Step 1: Clothing analyse karo
-  console.log("[openai] Analyzing clothing...");
-  const clothingInfo = await analyzeClothing(primaryImageBuffer);
+  try {
+    // Step 1: Clothing analyse karo
+    console.log("[openai] Analyzing clothing...");
+    const clothingInfo = await analyzeClothing(primaryImageBuffer);
 
-  // Step 2: Smart prompt banao
-  const smartPrompt = buildSmartPrompt(clothingInfo, options);
-  console.log("[openai] Smart prompt built for:", clothingInfo.category);
+    // Step 2: Smart prompt banao
+    const smartPrompt = buildSmartPrompt(clothingInfo, options);
+    console.log("[openai] Smart prompt built for:", clothingInfo.category);
 
-  // Step 3: Image generate karo
-  const imageFile = await OpenAI.toFile(primaryImageBuffer, "clothing.png", {
-    type: "image/png",
-  });
+    // Step 3: Image generate karo
+    const imageFile = await OpenAI.toFile(primaryImageBuffer, "clothing.png", {
+      type: "image/png",
+    });
 
-  const response = await client.images.edit({
-    model: "gpt-image-2",
-    image: imageFile,
-    prompt: smartPrompt,
-    n: count,
-    size: "1024x1024",
-    quality: "low",
-  });
+    const response = await client.images.edit({
+      model: "gpt-image-1",
+      image: imageFile,
+      prompt: smartPrompt,
+      n: count,
+      size: "1024x1024",
+      quality: "low",
+    });
 
-  for (const img of response.data) {
-    if (img.url) {
-      results.push({ url: img.url });
-    } else if (img.b64_json) {
-      results.push({ url: `data:image/png;base64,${img.b64_json}` });
+    for (const img of response.data) {
+      if (img.url) {
+        results.push({ url: img.url });
+      } else if (img.b64_json) {
+        results.push({ url: `data:image/png;base64,${img.b64_json}` });
+      }
     }
-  }
 
-  return results;
+    if (results.length === 0) {
+      const err = new Error("AI returned no images. Please try again.");
+      err.httpStatus = 500;
+      throw err;
+    }
+
+    return results;
+  } catch (error) {
+    // Agar error already mapped hai (httpStatus set hai) toh directly throw karo
+    if (error.httpStatus) {
+      throw error;
+    }
+    // Warna OpenAI raw error ko map karo
+    throw mapOpenAIError(error);
+  }
 };
 
 module.exports = { generate };
