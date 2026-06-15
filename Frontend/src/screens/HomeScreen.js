@@ -23,6 +23,7 @@ import ModelStyleSelector from "../components/ModelStyleSelector";
 import PoseSelector from "../components/PoseSelector";
 import GenerationCount from "../components/GenerationCount";
 import { generateModels } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const DEFAULT_STATE = {
   images: [],
@@ -36,6 +37,7 @@ const DEFAULT_STATE = {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { logout } = useAuth();
   const [form, setForm] = useState(DEFAULT_STATE);
   const [loading, setLoading] = useState(false);
 
@@ -43,6 +45,23 @@ export default function HomeScreen() {
 
   const updateField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleLogout = () => {
+    if (Platform.OS === "web") {
+      if (window.confirm("Are you sure you want to logout?")) {
+        logout();
+      }
+    } else {
+      Alert.alert("Logout", "Are you sure you want to logout?", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Logout",
+          style: "destructive",
+          onPress: () => logout(),
+        },
+      ]);
+    }
   };
 
   const handleGenerate = async () => {
@@ -95,7 +114,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       {/* ── Header (full width, outside centerWrap) ── */}
-      <Header />
+      <Header onLogout={handleLogout} />
 
       <View style={styles.centerWrap}>
         <ScrollView

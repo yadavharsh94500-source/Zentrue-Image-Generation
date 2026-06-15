@@ -1,8 +1,9 @@
 // components/Header.js
 import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
-export default function Header() {
+export default function Header({ onLogout }) {
   return (
     <View style={styles.container}>
       {/* Left — Logo */}
@@ -12,10 +13,23 @@ export default function Header() {
         resizeMode="contain"
       />
 
-      {/* Right — Badge */}
-      <View style={styles.badge}>
-        <View style={styles.badgeDot} />
-        <Text style={styles.badgeText}>AI Powered</Text>
+      {/* Right — Badge + Logout */}
+      <View style={styles.right}>
+        <View style={styles.badge}>
+          <View style={styles.badgeDot} />
+          <Text style={styles.badgeText}>AI Powered</Text>
+        </View>
+
+        {onLogout && (
+          <TouchableOpacity
+            onPress={onLogout}
+            style={styles.logoutBtn}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Feather name="log-out" size={18} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -34,6 +48,13 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 150,
     height: 50,
+  },
+
+  // ── Right side ──
+  right: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
 
   // ── Badge ──
@@ -58,5 +79,10 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 11,
     fontWeight: "600",
+  },
+
+  // ── Logout ──
+  logoutBtn: {
+    padding: 4,
   },
 });
