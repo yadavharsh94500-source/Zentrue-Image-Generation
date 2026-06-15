@@ -11,6 +11,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   ScrollView,
+  Image,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
@@ -71,9 +72,11 @@ export default function LoginScreen() {
         >
           {/* ── Logo / Brand ── */}
           <View style={styles.brandWrap}>
-            <View style={styles.logoBox}>
-              <Feather name="zap" size={28} color="#fff" />
-            </View>
+            <Image
+              source={require("../../assets/favicon.webp")}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
             <Text style={styles.brandName}>Zentrue</Text>
             <Text style={styles.brandTagline}>AI Fashion Model Generator</Text>
           </View>
@@ -95,13 +98,21 @@ export default function LoginScreen() {
             <View style={styles.fieldWrap}>
               <Text style={styles.label}>Email</Text>
               <View style={styles.inputWrap}>
-                <Feather name="mail" size={16} color="#9CA3AF" style={styles.inputIcon} />
+                <Feather
+                  name="mail"
+                  size={16}
+                  color="#9CA3AF"
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={styles.input}
                   placeholder="admin@example.com"
                   placeholderTextColor="#C4C4C4"
                   value={email}
-                  onChangeText={(t) => { setEmail(t); setError(""); }}
+                  onChangeText={(t) => {
+                    setEmail(t);
+                    setError("");
+                  }}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -114,13 +125,21 @@ export default function LoginScreen() {
             <View style={styles.fieldWrap}>
               <Text style={styles.label}>Password</Text>
               <View style={styles.inputWrap}>
-                <Feather name="lock" size={16} color="#9CA3AF" style={styles.inputIcon} />
+                <Feather
+                  name="lock"
+                  size={16}
+                  color="#9CA3AF"
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={[styles.input, { flex: 1 }]}
                   placeholder="Enter your password"
                   placeholderTextColor="#C4C4C4"
                   value={password}
-                  onChangeText={(t) => { setPassword(t); setError(""); }}
+                  onChangeText={(t) => {
+                    setPassword(t);
+                    setError("");
+                  }}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -186,20 +205,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 32,
   },
-  logoBox: {
-    width: 60,
-    height: 60,
-    borderRadius: 18,
-    backgroundColor: "#7C3AED",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-    shadowColor: "#7C3AED",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
-  },
+//   logoBox: {
+//     width: 60,
+//     height: 60,
+//     borderRadius: 18,
+//     backgroundColor: "#7C3AED",
+//     alignItems: "center",
+//     justifyContent: "center",
+//     marginBottom: 12,
+//     shadowColor: "#7C3AED",
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.3,
+//     shadowRadius: 12,
+//     elevation: 6,
+//   },
+  logoImage: {
+  width: 80,
+  height: 80,
+  marginBottom: 12,
+},
   brandName: {
     fontSize: 22,
     fontWeight: "700",
