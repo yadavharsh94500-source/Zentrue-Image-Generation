@@ -171,7 +171,7 @@ const generate = async (prompt, imageBuffers, count, options = {}) => {
     });
 
     const response = await client.images.edit({
-      model: "gpt-image-1",
+      model: "gpt-image-2",
       image: imageFile,
       prompt: smartPrompt,
       n: count,
