@@ -1,4 +1,4 @@
-// _layout.tsx — Light Theme
+// _layout.tsx — Zentrue Theme
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState, useCallback } from "react";
@@ -8,6 +8,7 @@ import { StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { checkHealth } from "../src/services/api";
 import { AuthContext } from "../src/context/AuthContext";
+import { COLORS } from "../src/constants/theme";
 
 const SESSION_KEY = "auth_session";
 
@@ -68,7 +69,7 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#F8F8F8" },
+            contentStyle: { backgroundColor: COLORS.background },
             animation: "fade",
           }}
         >

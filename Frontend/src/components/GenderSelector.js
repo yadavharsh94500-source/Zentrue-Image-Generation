@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
+import { COLORS } from "../constants/theme";
 
 const OPTIONS = [
   { label: "Female", value: "female" },
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: "600",
     marginBottom: 8,
@@ -53,9 +54,9 @@ const styles = StyleSheet.create({
   },
   option: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.background,
     borderWidth: 1,
-    borderColor: "#E2E2E2",
+    borderColor: COLORS.border,
     borderRadius: 10,
     paddingVertical: 13,
     paddingHorizontal: 12,
@@ -64,34 +65,34 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   optionSelected: {
-    borderColor: "#7C3AED",
-    backgroundColor: "#EDE9FE",
+    borderColor: COLORS.accent,
+    backgroundColor: COLORS.accentDim,
   },
   radio: {
     width: 18,
     height: 18,
     borderRadius: 9,
     borderWidth: 1.5,
-    borderColor: "#AAAAAA",
+    borderColor: COLORS.textMuted,
     alignItems: "center",
     justifyContent: "center",
   },
   radioSelected: {
-    borderColor: "#7C3AED",
+    borderColor: COLORS.accent,
   },
   radioDot: {
     width: 9,
     height: 9,
     borderRadius: 5,
-    backgroundColor: "#7C3AED",
+    backgroundColor: COLORS.accent,
   },
   text: {
-    color: "#666666",
+    color: COLORS.textSecondary,
     fontSize: 14,
     fontWeight: "500",
   },
   textSelected: {
-    color: "#7C3AED",
+    color: COLORS.accent,
     fontWeight: "600",
   },
 });

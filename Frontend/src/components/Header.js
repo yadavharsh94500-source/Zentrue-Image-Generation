@@ -1,14 +1,15 @@
-// components/Header.js
+// components/Header.js — Zentrue Theme
 import React from "react";
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { COLORS } from "../constants/theme";
 
 export default function Header({ onLogout }) {
   return (
     <View style={styles.container}>
       {/* Left — Logo */}
       <Image
-        source={require("../../assets/logo.png")}
+        source={require("../../assets/logo-new.png")}
         style={styles.logoImage}
         resizeMode="contain"
       />
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: "#7337D2",
+    backgroundColor: COLORS.accent,
   },
 
   logoImage: {
@@ -73,10 +74,10 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.textOnAccent,
   },
   badgeText: {
-    color: "#FFFFFF",
+    color: COLORS.textOnAccent,
     fontSize: 11,
     fontWeight: "600",
   },

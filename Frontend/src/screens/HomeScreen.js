@@ -1,4 +1,4 @@
-// HomeScreen.js — Light Theme
+// HomeScreen.js — Zentrue Theme
 import React, { useState } from "react";
 import {
   View,
@@ -24,6 +24,7 @@ import PoseSelector from "../components/PoseSelector";
 import GenerationCount from "../components/GenerationCount";
 import { generateModels } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { COLORS } from "../constants/theme";
 
 const DEFAULT_STATE = {
   images: [],
@@ -202,7 +203,7 @@ export default function HomeScreen() {
           {/* ── Validation Hint ── */}
           {!isFormValid && (
             <View style={styles.hintRow}>
-              <Feather name="info" size={13} color="#7C3AED" />
+              <Feather name="info" size={13} color={COLORS.accent} />
               <Text style={styles.hintText}>
                 {form.images.length === 0
                   ? "Upload at least one clothing image to continue"
@@ -224,7 +225,7 @@ export default function HomeScreen() {
             <Feather
               name="zap"
               size={17}
-              color={!isFormValid ? "#AAAAAA" : "#FFFFFF"}
+              color={!isFormValid ? COLORS.textMuted : COLORS.textOnAccent}
             />
             <Text
               style={[
@@ -246,14 +247,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#F5F4F8",
+    backgroundColor: COLORS.background,
   },
-  // centerWrap: {
-  //   flex: 1,
-  //   width: "100%",
-  //   maxWidth: 640,
-  //   alignSelf: "center",
-  // },
   centerWrap: {
     flex: 1,
     width: "100%",
@@ -272,14 +267,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
   },
   heroTitle: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 24,
     fontWeight: "700",
     letterSpacing: -0.5,
     marginBottom: 6,
   },
   heroSubtitle: {
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontSize: 13,
     lineHeight: 19,
   },
@@ -300,7 +295,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   hintText: {
-    color: "#7C3AED",
+    color: COLORS.accent,
     fontSize: 12,
     opacity: 0.85,
     flexShrink: 1,
@@ -312,28 +307,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "#7C3AED",
+    backgroundColor: COLORS.accent,
     borderRadius: 14,
     paddingVertical: 17,
-    shadowColor: "#7C3AED",
+    shadowColor: COLORS.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 6,
   },
   generateBtnDisabled: {
-    backgroundColor: "#E2E2E2",
+    backgroundColor: COLORS.border,
     shadowOpacity: 0,
     elevation: 0,
   },
   generateBtnText: {
-    color: "#FFFFFF",
+    color: COLORS.textOnAccent,
     fontSize: 16,
     fontWeight: "700",
     letterSpacing: 0.3,
   },
   generateBtnTextDisabled: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
   },
 
   bottomPad: { height: 40 },

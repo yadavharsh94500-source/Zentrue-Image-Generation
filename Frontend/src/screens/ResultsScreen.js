@@ -1,4 +1,4 @@
-// ResultsScreen.js — Redesigned Layout
+// ResultsScreen.js — Zentrue Theme
 import React, { useState } from "react";
 import {
   View,
@@ -18,6 +18,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { saveImageToGallery } from "../utils/imageHelper";
+import { COLORS } from "../constants/theme";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const GRID_PADDING = 20;
@@ -108,7 +109,7 @@ export default function ResultsScreen() {
       <SafeAreaView style={styles.safe}>
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIconWrap}>
-            <Feather name="image" size={32} color="#9CA3AF" />
+            <Feather name="image" size={32} color={COLORS.textMuted} />
           </View>
           <Text style={styles.emptyTitle}>No images to display</Text>
           <Text style={styles.emptySubtitle}>
@@ -118,7 +119,7 @@ export default function ResultsScreen() {
             style={styles.emptyBtn}
             onPress={() => router.replace("/")}
           >
-            <Feather name="arrow-left" size={15} color="#7C3AED" />
+            <Feather name="arrow-left" size={15} color={COLORS.accent} />
             <Text style={styles.emptyBtnText}>Start over</Text>
           </TouchableOpacity>
         </View>
@@ -181,7 +182,7 @@ export default function ResultsScreen() {
             onPress={() => router.replace("/")}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Feather name="arrow-left" size={14} color="#7C3AED" />
+            <Feather name="arrow-left" size={14} color={COLORS.accent} />
             <Text style={styles.backLinkText}>New generation</Text>
           </TouchableOpacity>
 
@@ -243,7 +244,7 @@ export default function ResultsScreen() {
                     onPress={() => handleRegenerate(img.url, index)}
                     accessibilityLabel="Regenerate similar"
                   >
-                    <Feather name="refresh-cw" size={15} color="#374151" />
+                    <Feather name="refresh-cw" size={15} color={COLORS.textPrimary} />
                   </TouchableOpacity>
 
                   {/* Download */}
@@ -268,7 +269,7 @@ export default function ResultsScreen() {
         {/* ── Save All ── */}
         {count > 1 && (
           <TouchableOpacity style={styles.saveAllBtn} onPress={handleDownloadAll}>
-            <Feather name="download-cloud" size={17} color="#374151" />
+            <Feather name="download-cloud" size={17} color={COLORS.textPrimary} />
             <Text style={styles.saveAllText}>Save all to gallery</Text>
           </TouchableOpacity>
         )}
@@ -292,7 +293,7 @@ export default function ResultsScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#F5F4F8",
+    backgroundColor: COLORS.background,
     paddingHorizontal: Platform.OS === "web" ? 0 : 12,
   },
   scroll: { flex: 1 },
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: "#7C3AED",
+    backgroundColor: COLORS.accent,
     paddingHorizontal: 24,
     paddingVertical: 13,
     borderRadius: 14,
@@ -351,18 +352,18 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   backLinkText: {
-    color: "#7C3AED",
+    color: COLORS.accent,
     fontSize: 13,
     fontWeight: "500",
   },
   title: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 26,
     fontWeight: "700",
     letterSpacing: -0.5,
   },
   subtitle: {
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontSize: 13,
     marginTop: 3,
   },
@@ -380,9 +381,9 @@ const styles = StyleSheet.create({
   tile: {
     borderRadius: 14,
     overflow: "hidden",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.surfaceRaised,
     borderWidth: 0.5,
-    borderColor: "rgba(0,0,0,0.08)",
+    borderColor: COLORS.border,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#E5E7EB",
+    backgroundColor: COLORS.surface,
   },
 
   // ── Badge ──
@@ -431,7 +432,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "#059669",
+    backgroundColor: COLORS.success,
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -450,14 +451,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderTopWidth: 0.5,
-    borderTopColor: "rgba(0,0,0,0.07)",
-    backgroundColor: "#FFFFFF",
+    borderTopColor: COLORS.border,
+    backgroundColor: COLORS.surfaceRaised,
     gap: 8,
   },
   tileLabel: {
     flex: 1,
     fontSize: 12,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontWeight: "500",
   },
   actionRow: {
@@ -468,15 +469,15 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 9,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: COLORS.surface,
     borderWidth: 0.5,
-    borderColor: "rgba(0,0,0,0.08)",
+    borderColor: COLORS.border,
     alignItems: "center",
     justifyContent: "center",
   },
   iconBtnPrimary: {
-    backgroundColor: "#7C3AED",
-    borderColor: "#7C3AED",
+    backgroundColor: COLORS.accent,
+    borderColor: COLORS.accent,
   },
 
   // ── Bottom buttons ──
@@ -485,9 +486,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.surfaceRaised,
     borderWidth: 0.5,
-    borderColor: "rgba(0,0,0,0.1)",
+    borderColor: COLORS.border,
     borderRadius: 14,
     paddingVertical: 14,
     marginBottom: 10,
@@ -498,7 +499,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   saveAllText: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: "600",
   },
@@ -507,17 +508,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "#7C3AED",
+    backgroundColor: COLORS.accent,
     borderRadius: 14,
     paddingVertical: 16,
-    shadowColor: "#7C3AED",
+    shadowColor: COLORS.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 6,
   },
   generateText: {
-    color: "#FFFFFF",
+    color: COLORS.textOnAccent,
     fontSize: 16,
     fontWeight: "700",
     letterSpacing: 0.2,
@@ -535,19 +536,19 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 20,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: COLORS.surface,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 4,
   },
   emptyTitle: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 17,
     fontWeight: "600",
     textAlign: "center",
   },
   emptySubtitle: {
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 20,
@@ -559,11 +560,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingHorizontal: 18,
     paddingVertical: 10,
-    backgroundColor: "#EDE9FE",
+    backgroundColor: COLORS.accentDim,
     borderRadius: 10,
   },
   emptyBtnText: {
-    color: "#7C3AED",
+    color: COLORS.accent,
     fontSize: 14,
     fontWeight: "500",
   },

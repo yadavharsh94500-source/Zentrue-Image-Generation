@@ -1,7 +1,8 @@
-// components/FormCard.js — Light Theme
+// components/FormCard.js — Zentrue Theme
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { COLORS } from "../constants/theme";
 
 /**
  * FormCard — wraps any form section in a clean card
@@ -18,7 +19,7 @@ export default function FormCard({ icon, title, subtitle, children }) {
       {/* Card Header */}
       <View style={styles.cardHeader}>
         <View style={styles.iconWrap}>
-          <Feather name={icon} size={14} color="#7C3AED" />
+          <Feather name={icon} size={14} color={COLORS.accent} />
         </View>
         <View style={styles.headerText}>
           <Text style={styles.title}>{title}</Text>
@@ -44,17 +45,17 @@ FormCard.Divider = function Divider() {
 
 const dividerStyle = {
   height: 0.5,
-  backgroundColor: "#F0F0F0",
+  backgroundColor: COLORS.border,
   marginVertical: 14,
   marginHorizontal: -16,
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.background,
     borderRadius: 16,
     borderWidth: 0.5,
-    borderColor: "#E8E8E8",
+    borderColor: COLORS.border,
     marginBottom: 12,
     overflow: "hidden",
     // subtle shadow
@@ -74,15 +75,15 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 13,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: COLORS.border,
   },
   iconWrap: {
     width: 30,
     height: 30,
     borderRadius: 8,
-    backgroundColor: "#F5F3FF",
+    backgroundColor: COLORS.accentDim,
     borderWidth: 0.5,
-    borderColor: "#DDD6FE",
+    borderColor: COLORS.accentDim,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -90,13 +91,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 14,
     fontWeight: "600",
     letterSpacing: -0.2,
   },
   subtitle: {
-    color: "#9CA3AF",
+    color: COLORS.textMuted,
     fontSize: 11,
     marginTop: 1,
   },

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { COLORS } from "../constants/theme";
 
 const OPTIONS = [1, 2, 3, 4];
 
@@ -51,16 +52,16 @@ export default function GenerationCount({ value, onChange }) {
 const styles = StyleSheet.create({
   container: { marginBottom: 28 },
   label: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: "600",
     marginBottom: 10,
   },
   segmented: {
     flexDirection: "row",
-    backgroundColor: "#F8F8F8",
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: "#E2E2E2",
+    borderColor: COLORS.border,
     borderRadius: 10,
     overflow: "hidden",
   },
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRightWidth: 1,
-    borderRightColor: "#E2E2E2",
+    borderRightColor: COLORS.border,
   },
   segmentFirst: {
     borderTopLeftRadius: 9,
@@ -82,18 +83,18 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 9,
   },
   segmentSelected: {
-    backgroundColor: "#7C3AED",
+    backgroundColor: COLORS.accent,
   },
   segmentText: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 15,
     fontWeight: "600",
   },
   segmentTextSelected: {
-    color: "#FFFFFF",
+    color: COLORS.textOnAccent,
   },
   hint: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 11,
     marginTop: 7,
   },

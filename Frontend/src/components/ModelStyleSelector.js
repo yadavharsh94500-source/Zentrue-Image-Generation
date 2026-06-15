@@ -4,6 +4,7 @@ import {
   Modal, FlatList, Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from "../constants/theme";
 
 const OPTIONS = [
   { label: "Ecommerce",   value: "ecommerce",   desc: "Clean product shots for online stores", icon: "storefront-outline" },
@@ -24,14 +25,14 @@ export default function ModelStyleSelector({ value, onChange }) {
       <TouchableOpacity style={styles.dropdown} onPress={() => setOpen(true)} activeOpacity={0.7}>
         <View style={styles.dropdownLeft}>
           {selected && (
-            <Ionicons name={selected.icon} size={16} color="#7C3AED" style={styles.dropdownIcon} />
+            <Ionicons name={selected.icon} size={16} color={COLORS.accent} style={styles.dropdownIcon} />
           )}
           <View>
             <Text style={styles.dropdownText}>{selected ? selected.label : "Select style"}</Text>
             {selected && <Text style={styles.dropdownDesc}>{selected.desc}</Text>}
           </View>
         </View>
-        <Ionicons name="chevron-down" size={16} color="#AAAAAA" />
+        <Ionicons name="chevron-down" size={16} color={COLORS.textMuted} />
       </TouchableOpacity>
 
       <Modal visible={open} transparent animationType="fade">
@@ -52,7 +53,7 @@ export default function ModelStyleSelector({ value, onChange }) {
                       <Ionicons
                         name={item.icon}
                         size={18}
-                        color={isSelected ? "#7C3AED" : "#AAAAAA"}
+                        color={isSelected ? COLORS.accent : COLORS.textMuted}
                       />
                     </View>
                     <View style={styles.optionContent}>
@@ -61,7 +62,7 @@ export default function ModelStyleSelector({ value, onChange }) {
                       </Text>
                       <Text style={styles.optionDesc}>{item.desc}</Text>
                     </View>
-                    {isSelected && <Ionicons name="checkmark" size={18} color="#7C3AED" />}
+                    {isSelected && <Ionicons name="checkmark" size={18} color={COLORS.accent} />}
                   </TouchableOpacity>
                 );
               }}
@@ -76,11 +77,11 @@ export default function ModelStyleSelector({ value, onChange }) {
 
 const styles = StyleSheet.create({
   container: { marginBottom: 20 },
-  label: { color: "#111111", fontSize: 15, fontWeight: "600", marginBottom: 8 },
+  label: { color: COLORS.textPrimary, fontSize: 15, fontWeight: "600", marginBottom: 8 },
   dropdown: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.background,
     borderWidth: 1,
-    borderColor: "#E2E2E2",
+    borderColor: COLORS.border,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -90,15 +91,15 @@ const styles = StyleSheet.create({
   },
   dropdownLeft: { flexDirection: "row", alignItems: "center", flex: 1 },
   dropdownIcon: { marginRight: 10 },
-  dropdownText: { color: "#111111", fontSize: 14 },
-  dropdownDesc: { color: "#AAAAAA", fontSize: 11, marginTop: 2 },
+  dropdownText: { color: COLORS.textPrimary, fontSize: 14 },
+  dropdownDesc: { color: COLORS.textMuted, fontSize: 11, marginTop: 2 },
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.25)",
     justifyContent: "flex-end",
   },
   sheet: {
-  backgroundColor: "#FFFFFF",
+  backgroundColor: COLORS.surfaceRaised,
   borderTopLeftRadius: 20,
   borderTopRightRadius: 20,
   paddingTop: 20,
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   alignSelf: "center",
 },
   sheetTitle: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 13,
     fontWeight: "600",
     textTransform: "uppercase",
@@ -124,19 +125,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  optionSelected: { backgroundColor: "#EDE9FE" },
+  optionSelected: { backgroundColor: COLORS.accentDim },
   iconBox: {
     width: 36,
     height: 36,
     borderRadius: 8,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: COLORS.surface,
     alignItems: "center",
     justifyContent: "center",
   },
-  iconBoxSelected: { backgroundColor: "#DDD6FE" },
+  iconBoxSelected: { backgroundColor: COLORS.accentDim },
   optionContent: { flex: 1 },
-  optionLabel: { color: "#666666", fontSize: 15 },
-  optionLabelSelected: { color: "#7C3AED", fontWeight: "600" },
-  optionDesc: { color: "#AAAAAA", fontSize: 12, marginTop: 2 },
-  separator: { height: 1, backgroundColor: "#E2E2E2" },
+  optionLabel: { color: COLORS.textSecondary, fontSize: 15 },
+  optionLabelSelected: { color: COLORS.accent, fontWeight: "600" },
+  optionDesc: { color: COLORS.textMuted, fontSize: 12, marginTop: 2 },
+  separator: { height: 1, backgroundColor: COLORS.border },
 });

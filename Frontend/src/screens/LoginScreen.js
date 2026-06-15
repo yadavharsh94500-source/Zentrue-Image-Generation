@@ -1,4 +1,4 @@
-// LoginScreen.js — Light Theme
+// LoginScreen.js — Zentrue Theme
 import React, { useState } from "react";
 import {
   View,
@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
+import { COLORS } from "../constants/theme";
 
 const ADMIN_EMAIL = process.env.EXPO_PUBLIC_ADMIN_EMAIL || "";
 const ADMIN_PASSWORD = process.env.EXPO_PUBLIC_ADMIN_PASSWORD || "";
@@ -101,13 +102,13 @@ export default function LoginScreen() {
                 <Feather
                   name="mail"
                   size={16}
-                  color="#9CA3AF"
+                  color={COLORS.textMuted}
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="admin@example.com"
-                  placeholderTextColor="#C4C4C4"
+                  placeholderTextColor={COLORS.textMuted}
                   value={email}
                   onChangeText={(t) => {
                     setEmail(t);
@@ -128,13 +129,13 @@ export default function LoginScreen() {
                 <Feather
                   name="lock"
                   size={16}
-                  color="#9CA3AF"
+                  color={COLORS.textMuted}
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={[styles.input, { flex: 1 }]}
                   placeholder="Enter your password"
-                  placeholderTextColor="#C4C4C4"
+                  placeholderTextColor={COLORS.textMuted}
                   value={password}
                   onChangeText={(t) => {
                     setPassword(t);
@@ -153,7 +154,7 @@ export default function LoginScreen() {
                   <Feather
                     name={showPassword ? "eye-off" : "eye"}
                     size={16}
-                    color="#9CA3AF"
+                    color={COLORS.textMuted}
                   />
                 </TouchableOpacity>
               </View>
@@ -190,7 +191,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#F5F4F8",
+    backgroundColor: COLORS.background,
   },
   container: {
     flexGrow: 1,
@@ -205,34 +206,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 32,
   },
-//   logoBox: {
-//     width: 60,
-//     height: 60,
-//     borderRadius: 18,
-//     backgroundColor: "#7C3AED",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     marginBottom: 12,
-//     shadowColor: "#7C3AED",
-//     shadowOffset: { width: 0, height: 4 },
-//     shadowOpacity: 0.3,
-//     shadowRadius: 12,
-//     elevation: 6,
-//   },
   logoImage: {
-  width: 80,
-  height: 80,
-  marginBottom: 12,
-},
+    width: 80,
+    height: 80,
+    marginBottom: 12,
+  },
   brandName: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#111111",
+    color: COLORS.textPrimary,
     letterSpacing: -0.5,
   },
   brandTagline: {
     fontSize: 13,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     marginTop: 3,
   },
 
@@ -240,11 +227,11 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     maxWidth: 400,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.surfaceRaised,
     borderRadius: 20,
     padding: 24,
     borderWidth: 0.5,
-    borderColor: "rgba(0,0,0,0.08)",
+    borderColor: COLORS.border,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -254,12 +241,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111111",
+    color: COLORS.textPrimary,
     marginBottom: 4,
   },
   cardSubtitle: {
     fontSize: 13,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     marginBottom: 20,
   },
 
@@ -290,15 +277,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#374151",
+    color: COLORS.textPrimary,
     marginBottom: 6,
   },
   inputWrap: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9F9FB",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: COLORS.border,
     borderRadius: 12,
     paddingHorizontal: 12,
     height: 48,
@@ -309,8 +296,10 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
-    color: "#111111",
+    color: COLORS.textPrimary,
     height: "100%",
+    backgroundColor: "transparent",
+    outlineStyle: "none",
   },
   eyeBtn: {
     paddingLeft: 8,
@@ -322,11 +311,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "#7C3AED",
+    backgroundColor: COLORS.accent,
     borderRadius: 12,
     paddingVertical: 15,
     marginTop: 8,
-    shadowColor: "#7C3AED",
+    shadowColor: COLORS.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 10,
@@ -336,7 +325,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   loginBtnText: {
-    color: "#FFFFFF",
+    color: COLORS.textOnAccent,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -345,7 +334,7 @@ const styles = StyleSheet.create({
   footer: {
     marginTop: 24,
     fontSize: 12,
-    color: "#9CA3AF",
+    color: COLORS.textMuted,
     textAlign: "center",
   },
 });

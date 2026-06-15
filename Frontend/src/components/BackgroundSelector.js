@@ -1,4 +1,4 @@
-// BackgroundSelector.js — Light Theme + Color Picker
+// BackgroundSelector.js — Zentrue Theme + Color Picker
 import React, { useState, useRef } from "react";
 import {
   View,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Platform,
 } from "react-native";
+import { COLORS } from "../constants/theme";
 
 const PRESETS = [
   { label: "White",  value: "#FFFFFF" },
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: "600",
     marginBottom: 12,
@@ -154,14 +155,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#E2E2E2",
+    borderColor: COLORS.border,
   },
   swatchSelected: {
     borderWidth: 2.5,
-    borderColor: "#7C3AED",
+    borderColor: COLORS.accent,
   },
   swatchDark: {
-    borderColor: "#888888",
+    borderColor: COLORS.textSecondary,
   },
   swatchCustom: {
     overflow: "hidden",
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
   },
   customIcon: {
     fontSize: 20,
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontWeight: "300",
     lineHeight: 24,
   },
@@ -189,16 +190,16 @@ const styles = StyleSheet.create({
   swatchLabel: {
     width: 44,
     textAlign: "center",
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 10,
   },
   customRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: COLORS.background,
     borderWidth: 1,
-    borderColor: "#E2E2E2",
+    borderColor: COLORS.border,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -208,20 +209,20 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "#E2E2E2",
+    borderColor: COLORS.border,
   },
   colorPreviewActive: {
-    borderColor: "#7C3AED",
+    borderColor: COLORS.accent,
     borderWidth: 2,
   },
   hexDisplay: {
     flex: 1,
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 14,
     fontFamily: "monospace",
   },
   changeTap: {
-    color: "#7C3AED",
+    color: COLORS.accent,
     fontSize: 12,
   },
 });

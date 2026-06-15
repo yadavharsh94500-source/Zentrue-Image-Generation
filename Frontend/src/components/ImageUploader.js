@@ -1,4 +1,4 @@
-// ImageUploader.js — Light Theme
+// ImageUploader.js — Zentrue Theme
 import React from "react";
 import {
   View,
@@ -11,6 +11,7 @@ import {
   Platform,
 } from "react-native";
 import { validateImage } from "../utils/imageHelper";
+import { COLORS } from "../constants/theme";
 
 const MAX_IMAGES = 4;
 
@@ -138,13 +139,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   label: {
-    color: "#111111",
+    color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: "600",
     marginBottom: 4,
   },
   sublabel: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 12,
     marginBottom: 12,
   },
@@ -187,25 +188,25 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: "#E2E2E2",
+    borderColor: COLORS.border,
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F8F8F8",
+    backgroundColor: COLORS.surface,
     gap: 6,
   },
   addIcon: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 28,
     lineHeight: 32,
     fontWeight: "300",
   },
   addText: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 11,
   },
   counter: {
-    color: "#AAAAAA",
+    color: COLORS.textMuted,
     fontSize: 11,
     marginTop: 8,
     textAlign: "right",
