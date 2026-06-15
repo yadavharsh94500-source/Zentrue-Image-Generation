@@ -5,12 +5,14 @@ import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet } from "react-native";
+import { checkHealth } from "../src/services/api"; // ← ADD
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useEffect(() => {
     SplashScreen.hideAsync();
+    checkHealth().catch(() => {}); // ← ADD — app open hote hi backend ping
   }, []);
 
   return (
