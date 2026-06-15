@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "Zentrue Image Generation",
+    "slug": "Zentrue-Image-Generation",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
+      "icon": "./assets/images/icon.png",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Required to save generated model images to your gallery.",
         "NSPhotoLibraryAddUsageDescription": "Required to save generated model images to your gallery."
@@ -26,7 +26,8 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "READ_MEDIA_IMAGES"
-      ]
+      ],
+      "package": "com.anonymous.ZentrueImageGeneration"
     },
     "web": {
       "output": "single",

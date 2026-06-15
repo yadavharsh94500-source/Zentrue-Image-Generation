@@ -1,4 +1,4 @@
-// HomeScreen.js — Light Theme + Web max-width fix
+// HomeScreen.js — Light Theme
 import React, { useState } from "react";
 import {
   View,
@@ -8,9 +8,13 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
+import Header from "../components/Header";
+import FormCard from "../components/FormCard";
 import ImageUploader from "../components/ImageUploader";
 import AgeGroupSelector from "../components/AgeGroupSelector";
 import GenderSelector from "../components/GenderSelector";
@@ -44,7 +48,10 @@ export default function HomeScreen() {
   const handleGenerate = async () => {
     if (!isFormValid) return;
     setLoading(true);
-    router.push({ pathname: "/loading", params: { generations: form.generations } });
+    router.push({
+      pathname: "/loading",
+      params: { generations: form.generations },
+    });
     try {
       const generatedImages = await generateModels({
         images: form.images,
@@ -57,12 +64,19 @@ export default function HomeScreen() {
       });
       router.replace({
         pathname: "/results",
-        params: { images: JSON.stringify(generatedImages), generations: form.generations },
+        params: {
+          images: JSON.stringify(generatedImages),
+          generations: form.generations,
+        },
       });
     } catch (error) {
       console.error("[HomeScreen] Generation error:", error.message);
       router.back();
-      Alert.alert("Generation Failed", error.message || "Something went wrong. Please try again.", [{ text: "OK" }]);
+      Alert.alert(
+        "Generation Failed",
+        error.message || "Something went wrong. Please try again.",
+        [{ text: "OK" }],
+      );
     } finally {
       setLoading(false);
     }
@@ -70,6 +84,9 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
+      {/* ── Header (full width, outside centerWrap) ── */}
+      <Header />
+
       <View style={styles.centerWrap}>
         <ScrollView
           style={styles.scroll}
@@ -77,68 +94,115 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.header}>
-            <Text style={styles.title}>AI Fashion Model</Text>
-            <Text style={styles.subtitle}>
-              Upload clothing → Generate studio-quality model photos
+          {/* ── Hero ── */}
+          <View style={styles.hero}>
+            <Text style={styles.heroTitle}>AI Fashion Model Generator</Text>
+            <Text style={styles.heroSubtitle}>
+              Upload your clothing — get studio-quality model photos in seconds.
             </Text>
           </View>
 
-          <ImageUploader
-            images={form.images}
-            onChange={(val) => updateField("images", val)}
-          />
+          {/* ── Card 1: Clothing Images ── */}
+          <FormCard
+            icon="upload"
+            title="Clothing images"
+            subtitle="Upload 1–4 product photos"
+          >
+            <ImageUploader
+              images={form.images}
+              onChange={(val) => updateField("images", val)}
+            />
+          </FormCard>
 
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <AgeGroupSelector
-                value={form.ageGroup}
-                onChange={(val) => updateField("ageGroup", val)}
-              />
+          {/* ── Card 2: Model Profile ── */}
+          <FormCard
+            icon="user"
+            title="Model profile"
+            subtitle="Age group and gender"
+          >
+            <View style={styles.row}>
+              <View style={styles.half}>
+                <AgeGroupSelector
+                  value={form.ageGroup}
+                  onChange={(val) => updateField("ageGroup", val)}
+                />
+              </View>
+              <View style={styles.half}>
+                <GenderSelector
+                  value={form.gender}
+                  onChange={(val) => updateField("gender", val)}
+                />
+              </View>
             </View>
-            <View style={styles.half}>
-              <GenderSelector
-                value={form.gender}
-                onChange={(val) => updateField("gender", val)}
-              />
-            </View>
-          </View>
+          </FormCard>
 
-          <BackgroundSelector
-            value={form.backgroundColor}
-            onChange={(val) => updateField("backgroundColor", val)}
-          />
-          <ModelStyleSelector
-            value={form.modelStyle}
-            onChange={(val) => updateField("modelStyle", val)}
-          />
-          <PoseSelector
-            value={form.pose}
-            onChange={(val) => updateField("pose", val)}
-          />
-          <GenerationCount
-            value={form.generations}
-            onChange={(val) => updateField("generations", val)}
-          />
+          {/* ── Card 3: Scene Settings ── */}
+          <FormCard
+            icon="image"
+            title="Scene settings"
+            subtitle="Background, style and pose"
+          >
+            <BackgroundSelector
+              value={form.backgroundColor}
+              onChange={(val) => updateField("backgroundColor", val)}
+            />
+            <FormCard.Divider />
+            <ModelStyleSelector
+              value={form.modelStyle}
+              onChange={(val) => updateField("modelStyle", val)}
+            />
+            <FormCard.Divider />
+            <PoseSelector
+              value={form.pose}
+              onChange={(val) => updateField("pose", val)}
+            />
+          </FormCard>
 
+          {/* ── Card 4: Output ── */}
+          <FormCard
+            icon="layers"
+            title="Output"
+            subtitle="How many images to generate"
+          >
+            <GenerationCount
+              value={form.generations}
+              onChange={(val) => updateField("generations", val)}
+            />
+          </FormCard>
+
+          {/* ── Validation Hint ── */}
           {!isFormValid && (
-            <Text style={styles.requiredHint}>
-              {form.images.length === 0
-                ? "Upload at least one clothing image to continue"
-                : "Select age group and gender to continue"}
-            </Text>
+            <View style={styles.hintRow}>
+              <Feather name="info" size={13} color="#7C3AED" />
+              <Text style={styles.hintText}>
+                {form.images.length === 0
+                  ? "Upload at least one clothing image to continue"
+                  : "Select age group and gender to continue"}
+              </Text>
+            </View>
           )}
 
+          {/* ── Generate Button ── */}
           <TouchableOpacity
-            style={[styles.generateBtn, !isFormValid && styles.generateBtnDisabled]}
+            style={[
+              styles.generateBtn,
+              !isFormValid && styles.generateBtnDisabled,
+            ]}
             onPress={handleGenerate}
             disabled={!isFormValid || loading}
             activeOpacity={0.85}
           >
-            <Text style={[
-              styles.generateBtnText,
-              !isFormValid && styles.generateBtnTextDisabled,
-            ]}>
+            <Feather
+              name="zap"
+              size={17}
+              color={!isFormValid ? "#AAAAAA" : "#FFFFFF"}
+            />
+            <Text
+              style={[
+                styles.generateBtnText,
+                !isFormValid && styles.generateBtnTextDisabled,
+              ]}
+            >
               Generate Models
             </Text>
           </TouchableOpacity>
@@ -153,50 +217,75 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: "#F5F4F8",
   },
+  // centerWrap: {
+  //   flex: 1,
+  //   width: "100%",
+  //   maxWidth: 640,
+  //   alignSelf: "center",
+  // },
   centerWrap: {
     flex: 1,
     width: "100%",
-    maxWidth: 640,
+    maxWidth: Platform.OS === "web" ? 640 : "100%",
     alignSelf: "center",
   },
   scroll: { flex: 1 },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingHorizontal: 16,
+    paddingTop: 22,
   },
-  header: { marginBottom: 28 },
-  title: {
+
+  // ── Hero ──
+  hero: {
+    marginBottom: 20,
+    paddingHorizontal: 2,
+  },
+  heroTitle: {
     color: "#111111",
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "700",
     letterSpacing: -0.5,
     marginBottom: 6,
   },
-  subtitle: {
-    color: "#666666",
+  heroSubtitle: {
+    color: "#6B7280",
     fontSize: 13,
-    lineHeight: 18,
+    lineHeight: 19,
   },
+
+  // ── Row inside card ──
   row: {
     flexDirection: "row",
     gap: 12,
   },
   half: { flex: 1 },
-  requiredHint: {
+
+  // ── Hint ──
+  hintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    justifyContent: "center",
+    marginBottom: 14,
+  },
+  hintText: {
     color: "#7C3AED",
     fontSize: 12,
-    textAlign: "center",
-    marginBottom: 14,
-    opacity: 0.8,
+    opacity: 0.85,
+    flexShrink: 1,
   },
+
+  // ── Generate Button ──
   generateBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
     backgroundColor: "#7C3AED",
     borderRadius: 14,
     paddingVertical: 17,
-    alignItems: "center",
-    justifyContent: "center",
     shadowColor: "#7C3AED",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
@@ -217,5 +306,6 @@ const styles = StyleSheet.create({
   generateBtnTextDisabled: {
     color: "#AAAAAA",
   },
+
   bottomPad: { height: 40 },
 });
